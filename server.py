@@ -6,8 +6,8 @@ import re
 from dropbox import client, rest, session
 from mako.template import Template
 
-APP_KEY = 'dzqhhfga39e41xf'
-APP_SECRET = '8d2abh3qjg2epwk'
+APP_KEY = ''
+APP_SECRET = ''
 
 ACCESS_TYPE = 'app_folder'
 sess = session.DropboxSession(APP_KEY, APP_SECRET, ACCESS_TYPE)

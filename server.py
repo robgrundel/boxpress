@@ -25,9 +25,9 @@ class Boxpress:
   	print uid
   	access_token = sess.obtain_access_token(self.request_token)
 
-    token_file = open(TOKENS,'w')
-    token_file.write("%s|%s" % (access_token.key,access_token.secret) )
-    token_file.close()
+  	token_file = open(self.TOKENS,'w')
+  	token_file.write("%s|%s" % (access_token.key,access_token.secret) )
+  	token_file.close()
 
   	raise cherrypy.HTTPRedirect("/")
   
@@ -35,35 +35,32 @@ class Boxpress:
 
   
   def index(self):
-  	if !os.path.exists(self.TOKENS):
-      self.request_token = sess.obtain_request_token()
-      url = sess.build_authorize_url(self.request_token, oauth_callback= cherrypy.request.base + '/set_dropbox_auth')
-      raise cherrypy.HTTPRedirect(url)
+  	if (os.path.exists(self.TOKENS) == False):
+  		self.request_token = sess.obtain_request_token()
+  		url = sess.build_authorize_url(self.request_token, oauth_callback= cherrypy.request.base + '/set_dropbox_auth')
+  		raise cherrypy.HTTPRedirect(url)
+  	token_file = open(self.TOKENS)
+  	token_key,token_secret = token_file.read().split('|')
+  	token_file.close()
 
-    token_file = open(TOKENS)
-    token_key,token_secret = token_file.read().split('|')
-    token_file.close()
-
-    sess.set_token(token_key,token_secret)
-    box_client = client.DropboxClient(sess)
-    post, m = box_client.get_file_and_metadata('how-I-wrote-this-blog.md')
-    
+  	sess.set_token(token_key,token_secret)
+  	box_client = client.DropboxClient(sess)
+  	post, m = box_client.get_file_and_metadata('how-I-wrote-this-blog.md')
     
     # metadata = ''
 
     # for x in range(0, 3):
 	 # metadata = metadata + input_file.readline()
-    contents = post.read()
-    title = self.read_metadata(contents, 'title')
-    date =  self.read_metadata(contents, 'date')
-    tags = self.read_metadata(contents, 'tags')
-    
-    
-    html = markdown.markdown(contents)
+	contents = post.read()
+	title = self.read_metadata(contents, 'title')
+	date =  self.read_metadata(contents, 'date')
+	tags = self.read_metadata(contents, 'tags')
 
-    template = Template(filename='index.html')	
-    
-    return template.render(content=html, title=title, date=date, tags=tags)
+	html = markdown.markdown(contents)
+
+	template = Template(filename='index.html')	
+
+	return template.render(content=html, title=title, date=date, tags=tags)
   index.exposed = True
   set_dropbox_auth.exposed = True
   

@@ -33,7 +33,7 @@ class Boxpress:
       post, m = box_client.get_file_and_metadata('how-I-wrote-this-blog.md')
     except Exception:
       self.request_token = sess.obtain_request_token()
-      url = sess.build_authorize_url(self.request_token, oauth_callback='http://127.0.0.1:5000/set_dropbox_auth')
+      url = sess.build_authorize_url(self.request_token, oauth_callback= cherrypy.request.base + '/set_dropbox_auth')
       raise cherrypy.HTTPRedirect(url)
     
     

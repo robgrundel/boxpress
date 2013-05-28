@@ -1,1 +1,1 @@
-web: python server.py -c boxpress.conf
+web: python server.py 

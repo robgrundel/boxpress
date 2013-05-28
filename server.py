@@ -1,11 +1,8 @@
 import cherrypy
 import os.path
 from mako.template import Template
-from cherrypy.process import servers
-
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
 
 class Boxpress:
 	@cherrypy.expose

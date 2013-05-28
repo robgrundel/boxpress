@@ -32,7 +32,7 @@ class Boxpress:
   	raise cherrypy.HTTPRedirect("/")
   
   
-
+  
   
   def index(self):
   	if (os.path.exists(self.TOKENS) == False):
@@ -47,16 +47,13 @@ class Boxpress:
   	box_client = client.DropboxClient(sess)
   	post, m = box_client.get_file_and_metadata('how-I-wrote-this-blog.md')
     
-    # metadata = ''
-
-    # for x in range(0, 3):
-	 # metadata = metadata + input_file.readline()
 	contents = post.read()
+
 	title = self.read_metadata(contents, 'title')
 	date =  self.read_metadata(contents, 'date')
 	tags = self.read_metadata(contents, 'tags')
 
-	html = markdown.markdown(contents)
+	html = markdown.markdown(self.strip_metadata(contents))
 
 	template = Template(filename='index.html')	
 
@@ -64,6 +61,9 @@ class Boxpress:
   index.exposed = True
   set_dropbox_auth.exposed = True
   
+  def strip_metadata(self, contents):
+  	return '\n'.join(contents.split('\n')[3:])
+
   def read_metadata(self, source, key):
     m = re.search('(?<=' + key + ':).*', source)
     return m.group(0)

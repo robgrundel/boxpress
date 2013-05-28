@@ -41,17 +41,17 @@ class Boxpress:
 
     # for x in range(0, 3):
 	 # metadata = metadata + input_file.readline()
+    contents = post.read()
+    title = self.read_metadata(contents, 'title')
+    date =  self.read_metadata(contents, 'date')
+    tags = self.read_metadata(contents, 'tags')
     
-    #title = self.read_metadata(metadata, 'title')
-    #date =  self.read_metadata(metadata, 'date')
-    #tags = self.read_metadata(metadata, 'tags')
-    t = post.read()
     
-    html = markdown.markdown(t)
+    html = markdown.markdown(contents)
 
     template = Template(filename='index.html')	
     
-    return template.render(content=html, title='title', date='date', tags='tags')
+    return template.render(content=html, title=title, date=date, tags=tags)
   index.exposed = True
   set_dropbox_auth.exposed = True
   

@@ -18,23 +18,35 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 class Boxpress:
   
   request_token = ''
+  TOKENS = 'dropbox_token.txt'
 
   def set_dropbox_auth(self, oauth_token, uid):
   	print oauth_token
   	print uid
   	access_token = sess.obtain_access_token(self.request_token)
+
+    token_file = open(TOKENS,'w')
+    token_file.write("%s|%s" % (access_token.key,access_token.secret) )
+    token_file.close()
+
   	raise cherrypy.HTTPRedirect("/")
   
-  	
+  
+
   
   def index(self):
-    try:	
-      box_client = client.DropboxClient(sess)
-      post, m = box_client.get_file_and_metadata('how-I-wrote-this-blog.md')
-    except Exception:
+  	if !os.path.exists(self.TOKENS):
       self.request_token = sess.obtain_request_token()
       url = sess.build_authorize_url(self.request_token, oauth_callback= cherrypy.request.base + '/set_dropbox_auth')
       raise cherrypy.HTTPRedirect(url)
+
+    token_file = open(TOKENS)
+    token_key,token_secret = token_file.read().split('|')
+    token_file.close()
+
+    sess.set_token(token_key,token_secret)
+    box_client = client.DropboxClient(sess)
+    post, m = box_client.get_file_and_metadata('how-I-wrote-this-blog.md')
     
     
     # metadata = ''

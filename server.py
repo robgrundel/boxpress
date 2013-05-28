@@ -1,6 +1,11 @@
 import cherrypy
-from mako.template import Template
 import os.path
+from mako.template import Template
+from cherrypy.process import servers
+
+def fake_wait_for_occupied_port(host, port): return
+
+servers.wait_for_occupied_port = fake_wait_for_occupied_port
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 

@@ -31,33 +31,31 @@ class Boxpress:
 
   	raise cherrypy.HTTPRedirect("/")
   
-  
-  
-  
-  def index(self):
-  	if (os.path.exists(self.TOKENS) == False):
-  		self.request_token = sess.obtain_request_token()
-  		url = sess.build_authorize_url(self.request_token, oauth_callback= cherrypy.request.base + '/set_dropbox_auth')
-  		raise cherrypy.HTTPRedirect(url)
-  	token_file = open(self.TOKENS)
-  	token_key,token_secret = token_file.read().split('|')
-  	token_file.close()
-
-  	sess.set_token(token_key,token_secret)
-  	box_client = client.DropboxClient(sess)
-  	post, m = box_client.get_file_and_metadata('how-I-wrote-this-blog.md')
     
-	contents = post.read()
+  def index(self):
+    if (os.path.exists(self.TOKENS) == False):
+      self.request_token = sess.obtain_request_token()
+      url = sess.build_authorize_url(self.request_token, oauth_callback= cherrypy.request.base + '/set_dropbox_auth')
+      raise cherrypy.HTTPRedirect(url)
+    token_file = open(self.TOKENS)
+    token_key,token_secret = token_file.read().split('|')
+    token_file.close()
 
-	title = self.read_metadata(contents, 'title')
-	date =  self.read_metadata(contents, 'date')
-	tags = self.read_metadata(contents, 'tags')
+    sess.set_token(token_key,token_secret)
+    box_client = client.DropboxClient(sess)
 
-	html = markdown.markdown(self.strip_metadata(contents))
+    posts = []
+    for p in ['how-I-wrote-this-blog.md']:
+      post, m = box_client.get_file_and_metadata(p)
+      contents = post.read()
+      title = self.read_metadata(contents, 'title')
+      date =  self.read_metadata(contents, 'date')
+      tags = self.read_metadata(contents, 'tags')
+      html = markdown.markdown(self.strip_metadata(contents))
+      posts.append({ 'content' : html, 'title' : title, 'date' : date, 'tags' : tags })
 
-	template = Template(filename='index.html')	
-
-	return template.render(content=html, title=title, date=date, tags=tags)
+    template = Template(filename='index.html')	
+    return template.render(posts=posts)
   index.exposed = True
   set_dropbox_auth.exposed = True
   

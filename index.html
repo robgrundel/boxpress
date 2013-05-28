@@ -40,14 +40,16 @@
   </header>
 
   <section role="main" class="container">
-    <article>
+    % for post in posts:
+       <article>
        <header>
-        <h1><a href="">${title}</a></h1>
+        <h1><a href="">${post['title']}</a></h1>
       </header>
       <section class="content">
-        ${content}
+        ${post['content']}
       </section>
     </article>
+    % endfor
   </section>
 
   <footer role="footer">

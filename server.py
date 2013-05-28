@@ -45,8 +45,10 @@ class Boxpress:
     box_client = client.DropboxClient(sess)
 
     posts = []
-    for p in ['how-I-wrote-this-blog.md']:
-      post, m = box_client.get_file_and_metadata(p)
+
+    folder_metadata = box_client.metadata('/')
+    for p in folder_metadata['contents']:
+      post, m = box_client.get_file_and_metadata(p['path'])
       contents = post.read()
       title = self.read_metadata(contents, 'title')
       date =  self.read_metadata(contents, 'date')

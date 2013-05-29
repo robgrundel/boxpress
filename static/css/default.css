@@ -25,6 +25,7 @@ body{
   background: #fff;
   -webkit-font-smoothing: antialiased;
 }
+
 a{
   cursor: pointer;
   color: #000;
@@ -44,7 +45,7 @@ article a,
     background: #fff4cc;
   }
 h1,h2,h3,h4{
-  font-family: "brandon-grotesque", Futura, Helvetica Neue, Helvetica, sans-serif;
+  font-family: "Source Sans Pro", Futura, Helvetica Neue, Helvetica, sans-serif;
   font-weight: 500;
 }
 code{
@@ -151,7 +152,7 @@ section[role="main"]{
         display: block;
         margin-bottom: 8px;
         color: #a4abb2;
-        font-family: "brandon-grotesque", Futura, Helvetica Neue, Helvetica, sans-serif;
+        font-family: 'Source Sans Pro', Futura, Helvetica Neue, Helvetica, sans-serif;
         font-size: .75em;
         font-weight: 500;
         text-transform: uppercase;

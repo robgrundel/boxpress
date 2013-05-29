@@ -1,6 +1,6 @@
 Boxpress
 ========
-Blogging using Dropbox + Markdown + Heroku.
+Blogging using Dropbox + Markdown. Written in Python and built to deploy on [Heroku](http://heroku.com).
 
 As demonstrated on [robgrundel.com](http://robgrundel.com).
 

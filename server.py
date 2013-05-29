@@ -6,8 +6,8 @@ import re
 from dropbox import client, rest, session
 from mako.template import Template
 
-APP_KEY = ''
-APP_SECRET = ''
+APP_KEY = '7nof0ofovo9k6a3'
+APP_SECRET = 'wrt6hw6b369r6o4'
 
 ACCESS_TYPE = 'app_folder'
 sess = session.DropboxSession(APP_KEY, APP_SECRET, ACCESS_TYPE)
@@ -30,7 +30,6 @@ class Boxpress:
   	token_file.close()
 
   	raise cherrypy.HTTPRedirect("/")
-  
     
   def index(self):
     if (os.path.exists(self.TOKENS) == False):
@@ -54,7 +53,7 @@ class Boxpress:
       date =  self.read_metadata(contents, 'date')
       tags = self.read_metadata(contents, 'tags')
       html = markdown.markdown(self.strip_metadata(contents))
-      posts.append({ 'content' : html, 'title' : title, 'date' : date, 'tags' : tags })
+      posts.append({ 'content' : html, 'title' : title, 'date' : date, 'tags' : tags, 'permalink' : 'post/' + p['path'][1:-3] })
 
     template = Template(filename='index.html')	
     return template.render(posts=posts)

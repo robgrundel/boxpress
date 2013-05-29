@@ -45,6 +45,9 @@ class DropboxSession:
 
 class PostGenerator:
 
+  def __init__(self, session):
+    self.session = session
+  
   def strip_metadata(self, contents):
     return '\n'.join(contents.split('\n')[3:])
 
@@ -52,8 +55,8 @@ class PostGenerator:
     m = re.search('(?<=' + key + ':).*', source)
     return m.group(0)
 
-  def generate_post(self,box_client,path):
-    post, m = box_client.get_file_and_metadata(path)
+  def generate_post(self,path):
+    post, m = self.session.get_client().get_file_and_metadata(path)
     contents = post.read()
     title = self.read_metadata(contents, 'title')
     date =  self.read_metadata(contents, 'date')
@@ -63,36 +66,40 @@ class PostGenerator:
 
 class Post:
 
-  def __init__(self, session):
-    self.dropbox_session = session
+  def __init__(self, session, generator):
+    self.session = session
+    self.generator = generator
 
-  def default(self, post):
-    generator = PostGenerator()
-    post = generator.generate_post(self.dropbox_session.get_client(), '/' + post + '.md')
+  def default(self, post):    
+    if(self.session.needs_authentication()):
+      raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
+    post = generator.generate_post('/' + post + '.md')
     template = Template(filename='index.html') 
-    return template.render(posts=[post], is_index=False)
+    return template.render(posts=[post], is_index=False, is_post=True)
   default.exposed = True
 
 class Boxpress: 
-  dropbox_session = DropboxSession()
-  generator = PostGenerator()
+  def __init__(self, session, generator):
+    self.session = session
+    self.generator = generator
 
   def set_dropbox_auth(self, oauth_token, uid):  	
-    self.dropbox_session.set_auth(oauth_token, uid)
+    self.session.set_auth(oauth_token, uid)
     raise cherrypy.HTTPRedirect("/")
 
   def index(self):
-    if(self.dropbox_session.needs_authentication()):
-      raise cherrypy.HTTPRedirect(self.dropbox_session.get_auth_url('/set_dropbox_auth'))
-
+    if(self.session.needs_authentication()):
+      raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
+    
+    client = self.session.get_client()
     posts = []
 
-    folder_metadata = self.dropbox_session.get_client().metadata('/')
+    folder_metadata = client.metadata('/')
     for f in folder_metadata['contents']:
-      posts.append(self.generator.generate_post(self.dropbox_session.get_client(), f['path']))
+      posts.append(self.generator.generate_post(f['path']))
 
     template = Template(filename='index.html')	
-    return template.render(posts=posts, is_index=True)
+    return template.render(posts=posts, is_index=True, is_post=False)
   index.exposed = True
   set_dropbox_auth.exposed = True
   
@@ -106,6 +113,8 @@ if __name__ == '__main__':
 		'/static': {'tools.staticdir.on':  True,'tools.staticdir.dir': 'static'}
 		}
 
-root = Boxpress()
-root.post = Post(root.dropbox_session)
+dropbox_session = DropboxSession()
+generator = PostGenerator(dropbox_session)
+root = Boxpress(dropbox_session, generator)
+root.post = Post(dropbox_session, generator)
 cherrypy.quickstart(root, '/', config=conf)

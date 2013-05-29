@@ -42,13 +42,35 @@
 
   <section role="main" class="container">
     % for post in posts:
-       <article>
-       <header>
+     <article>
+      <time datetime="${post['date']}">${post['date']}</time>
+      <header>
         <h1><a href="/${post['permalink']}">${post['title']}</a></h1>
       </header>
       <section class="content">
         ${post['content']}
       </section>
+      % if is_post:
+      <footer role="contentinfo" class="post-foot">
+        <section class="post-foot-top">
+          <a class="link-back" href="/">&laquo; Back</a>
+          <a href="https://twitter.com/share" class="twitter-share-button" data-text="Currently reading: {{title}} by @robgrundel">Tweet</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </section>
+        <section class="bio">
+          <img src="/static/img/rob-grundel.png" />
+          <h5>Rob Grundel</h5>
+          <p>
+            Rob Grundel blog
+          </p>
+          <ul>
+            <li>
+              <a href="http://twitter.com/robgrundel">Twitter</a>
+            </li>
+          </ul>
+        </section>
+      </footer>
+      % endif
     </article>
     % endfor
   </section>

@@ -46,7 +46,11 @@
      <article>
       <time datetime="${post['date']}">${post['date']}</time>
       <header>
-        <h1><a href="/${post['permalink']}">${post['title']}</a></h1>
+        % if is_post:
+          <h1>${post['title']}</h1>
+        % else:
+          <h1><a href="/${post['permalink']}">${post['title']}</a></h1>
+        % endif
       </header>
       <section class="content">
         ${post['content']}

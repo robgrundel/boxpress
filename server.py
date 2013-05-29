@@ -39,7 +39,7 @@ class DropboxSession:
     return True
 
   def get_auth_url(self, path):
-    self.request_token = sess.obtain_request_token()
+    self.request_token = self.sess.obtain_request_token()
     return sess.build_authorize_url(self.request_token, oauth_callback= cherrypy.request.base + path)
 
 

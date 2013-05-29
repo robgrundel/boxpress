@@ -71,7 +71,7 @@ header[role="banner"]{
     height: 34px;
     margin-top: 20px;
     border: 0 none;
-    background: url(http://assets.michieldegraaf.com/blog/img/logo-black.png) no-repeat center center;
+    background: url(/static/img/logo.png) no-repeat center center;
   }
     .logo img{
       display: none;
@@ -463,7 +463,7 @@ footer[role="footer"]{
 
 @media screen and (-webkit-min-device-pixel-ratio : 1.5),screen and (min-device-pixel-ratio : 1.5){
   header[role="banner"] .logo{
-    background-image: url(http://assets.michieldegraaf.com/blog/img/logo-black@2x.png);
+    background-image: url(static/img/logo.png);
     background-size: 37px 34px;
   }
 }

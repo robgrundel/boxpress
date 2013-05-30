@@ -53,7 +53,11 @@
         % endif
       </header>
       <section class="content">
-        ${post['content']}
+        % if is_post:
+          ${post['content']}
+        % else:
+         ${post['excerpt']}
+        % endif
       </section>
       % if is_post:
       <footer role="contentinfo" class="post-foot">

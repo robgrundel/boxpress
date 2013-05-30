@@ -56,6 +56,10 @@ class PostGenerator:
     m = re.search('(?<=' + key + ':)[^\r\n]*', source)
     return m.group(0).strip()
 
+  def generate_excerpt(self, html):
+    m = re.search('<p>[\S\s]*?<\/p>', html)
+    return m.group(0).strip()
+
   def generate_post(self,path):
     post, m = self.session.get_client().get_file_and_metadata(path)
     contents = post.read()
@@ -63,8 +67,9 @@ class PostGenerator:
     date =  self.read_metadata(contents, 'date')
     print date
     tags = self.read_metadata(contents, 'tags')
-    html = markdown.markdown(self.strip_metadata(contents))
-    return { 'content' : html, 'title' : title, 'date' : date, 'tags' : tags, 'permalink' : 'post/' + path[1:-3] }
+    contents = self.strip_metadata(contents)
+    html = markdown.markdown(contents)
+    return { 'content' : html, 'title' : title, 'date' : date, 'tags' : tags, 'permalink' : 'post/' + path[1:-3], 'excerpt' : self.generate_excerpt(html) }
 
 class Post:
 

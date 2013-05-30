@@ -65,7 +65,6 @@ class PostGenerator:
     contents = post.read()
     title = self.read_metadata(contents, 'title')
     date =  self.read_metadata(contents, 'date')
-    print date
     tags = self.read_metadata(contents, 'tags')
     contents = self.strip_metadata(contents)
     html = markdown.markdown(contents)

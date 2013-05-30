@@ -46,7 +46,7 @@ article a,
   }
 h1,h2,h3,h4{
   font-family: "Source Sans Pro", Futura, Helvetica Neue, Helvetica, sans-serif;
-  font-weight: 500;
+  font-weight: 700;
 }
 code{
   font-family: Lucida Console, Monaco, Andale Mono, monospace;
@@ -154,7 +154,7 @@ section[role="main"]{
         color: #a4abb2;
         font-family: 'Source Sans Pro', Futura, Helvetica Neue, Helvetica, sans-serif;
         font-size: .75em;
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: .2em;
       }

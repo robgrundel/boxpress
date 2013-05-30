@@ -1,4 +1,5 @@
 import cherrypy
+import datetime
 import os.path
 import codecs
 import markdown
@@ -52,14 +53,15 @@ class PostGenerator:
     return '\n'.join(contents.split('\n')[3:])
 
   def read_metadata(self, source, key):
-    m = re.search('(?<=' + key + ':).*', source)
-    return m.group(0)
+    m = re.search('(?<=' + key + ':)[^\r\n]*', source)
+    return m.group(0).strip()
 
   def generate_post(self,path):
     post, m = self.session.get_client().get_file_and_metadata(path)
     contents = post.read()
     title = self.read_metadata(contents, 'title')
     date =  self.read_metadata(contents, 'date')
+    print date
     tags = self.read_metadata(contents, 'tags')
     html = markdown.markdown(self.strip_metadata(contents))
     return { 'content' : html, 'title' : title, 'date' : date, 'tags' : tags, 'permalink' : 'post/' + path[1:-3] }
@@ -95,11 +97,12 @@ class Boxpress:
     posts = []
 
     folder_metadata = client.metadata('/')
-    for f in folder_metadata['contents']:
-      posts.append(self.generator.generate_post(f['path']))
+    for f in folder_metadata['contents'] :
+      if(f['path'].endswith('.md')):
+        posts.append(self.generator.generate_post(f['path']))
 
     template = Template(filename='index.html')	
-    return template.render(posts=posts, is_index=True, is_post=False)
+    return template.render(posts=sorted(posts, key=lambda post: datetime.datetime.strptime(post['date'], '%Y-%m-%d %H:%M'), reverse=True), is_index=True, is_post=False)
   index.exposed = True
   set_dropbox_auth.exposed = True
   

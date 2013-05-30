@@ -50,7 +50,12 @@ class PostGenerator:
     self.session = session
   
   def strip_metadata(self, contents):
-    return '\n'.join(contents.split('\n')[3:])
+    idx = contents.find('---')
+    return contents[idx:]
+
+  def get_metadata(self, contents):
+    idx = contents.find('---')
+    return contents[:idx]
 
   def read_metadata(self, source, key):
     m = re.search('(?<=' + key + ':)[^\r\n]*', source)
@@ -63,9 +68,10 @@ class PostGenerator:
   def generate_post(self,path):
     post, m = self.session.get_client().get_file_and_metadata(path)
     contents = post.read()
-    title = self.read_metadata(contents, 'title')
-    date =  self.read_metadata(contents, 'date')
-    tags = self.read_metadata(contents, 'tags')
+    metadata = self.get_metadata(contents)
+    title = self.read_metadata(metadata, 'title')
+    date =  self.read_metadata(metadata, 'date')
+    tags = self.read_metadata(metadata, 'tags')
     contents = self.strip_metadata(contents)
     html = markdown.markdown(contents)
     return { 'content' : html, 'title' : title, 'date' : date, 'tags' : tags, 'permalink' : 'post/' + path[1:-3], 'excerpt' : self.generate_excerpt(html) }

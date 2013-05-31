@@ -68,6 +68,7 @@ class PostGenerator:
   def generate_post(self,path):
     post, m = self.session.get_client().get_file_and_metadata(path)
     contents = post.read()
+    contents = contents.decode('utf-8')
     metadata = self.get_metadata(contents)
     title = self.read_metadata(metadata, 'title')
     date =  self.read_metadata(metadata, 'date')
@@ -119,7 +120,7 @@ class Boxpress:
  
   	 
 if __name__ == '__main__':
-  current_dir = os.path.dirname(os.path.abspath(__file__))
+  current_dir    = os.path.dirname(os.path.abspath(__file__))
   conf = {
 		'global' :  {'server.socket_host': '0.0.0.0', 'server.socket_port': int(os.environ.get('PORT', '5000'))},
 		'/': {'tools.staticdir.root':  current_dir},

@@ -87,7 +87,7 @@
 
   <div class="pagination">
     % if page > 1:
-      <a href="/posts/${page-1}">< Previous page</a>
+      <a href="${'/posts/' + (page-1) if page > 2 else '/' }">< Previous page</a>
     % endif     
     % if are_more_posts:
       <a href="/posts/${page+1}">Next posts ></a>

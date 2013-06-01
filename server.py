@@ -30,13 +30,13 @@ class DropboxSession:
     token_file.close()
     self.sess.set_token(access_token.key,access_token.secret)
     self.client = client.DropboxClient(self.sess)
-    requests.put("https://api.heroku.com/apps/diminished-augmented/config_vars", params=[{'dropbox_key', access_token.key},{'dropbox_secret', access_token.secret}], auth=('', 'b08ac565-6c18-430e-83ea-e2b7f78e8cb7'))
+    requests.put("https://api.heroku.com/apps/diminished-augmented/config_vars", headers = {'content-type': 'application/json'}, params=[{'dropbox_key', access_token.key},{'dropbox_secret', access_token.secret}], auth=('', 'b08ac565-6c18-430e-83ea-e2b7f78e8cb7'))
     raise cherrypy.HTTPRedirect('/')
 
 
   def needs_authentication(self):
     token_key = None
-    r = requests.get("https://api.heroku.com/apps/diminished-augmented/config_vars", auth=('', 'b08ac565-6c18-430e-83ea-e2b7f78e8cb7'))
+    r = requests.get("https://api.heroku.com/apps/diminished-augmented/config_vars", headers = {'content-type': 'application/json'}, auth=('', 'b08ac565-6c18-430e-83ea-e2b7f78e8cb7'))
     config = r.json()
     print config
     if(os.path.exists(self.TOKENS) == True):

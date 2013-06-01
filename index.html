@@ -85,7 +85,14 @@
 
   </section>
 
-  <div id="trigger"></div>
+  <div class="pagination">
+    % if page > 1:
+      <a href="/posts/${page-1}">< Previous page</a>
+    % endif     
+    % if are_more_posts:
+      <a href="/posts/${page+1}">Next posts ></a>
+    % endif
+  </div>
 
   <footer role="footer">
     <section class="container">

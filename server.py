@@ -102,7 +102,7 @@ class Boxpress:
     self.session.set_auth(oauth_token, uid)
     raise cherrypy.HTTPRedirect("/")
 
-  def index(self,page=1):
+  def posts(self,page=1):
     if(self.session.needs_authentication()):
       raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
     
@@ -114,10 +114,14 @@ class Boxpress:
     for f in contents[startIdx:startIdx+10]:
       if(f['path'].endswith('.md')):
         posts.append(self.generator.generate_post(f['path']))  
+
+    num_posts = len(contents)
+    are_more_posts =  (int(page) * 10) < num_posts
     
     template = Template(filename='index.html')	
-    return template.render(posts=posts, is_index=True, is_post=False)
-  index.exposed = True
+
+    return template.render(posts=posts, is_index=True, is_post=False, are_more_posts=are_more_posts, page=int(page) )
+  posts.exposed = True
   set_dropbox_auth.exposed = True
   
  
@@ -133,5 +137,6 @@ if __name__ == '__main__':
 dropbox_session = DropboxSession()
 generator = PostGenerator(dropbox_session)
 root = Boxpress(dropbox_session, generator)
+root.index = root.posts
 root.post = Post(dropbox_session, generator)
 cherrypy.quickstart(root, '/', config=conf)

@@ -7,7 +7,8 @@ import re
 from dropbox import client, rest, session
 from mako.template import Template
 
-
+import dateutil.tz
+from dateutil.parser import *
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 class DropboxSession:
@@ -100,22 +101,31 @@ class Boxpress:
     self.session.set_auth(oauth_token, uid)
     raise cherrypy.HTTPRedirect("/")
 
+  def posts(self,page):
+    if(self.session.needs_authentication()):
+      raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
+    client = self.session.get_client()
+    posts = []
+    contents = sorted(client.metadata('/')['contents'], key=lambda post: parse(post['modified']))
+    
+    startIdx = (int(page)-1) * 10
+    for f in contents[startIdx:startIdx+10]:
+      if(f['path'].endswith('.md')):
+        posts.append(self.generator.generate_post(f['path']))  
+    template = Template(filename='posts.html')  
+    return template.render(posts=posts, is_index=True, is_post=False)
+
+
   def index(self):
     if(self.session.needs_authentication()):
       raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
     
-    client = self.session.get_client()
-    posts = []
-
-    folder_metadata = client.metadata('/')
-    for f in folder_metadata['contents'] :
-      if(f['path'].endswith('.md')):
-        posts.append(self.generator.generate_post(f['path']))
-
+    posts = self.posts(1)
     template = Template(filename='index.html')	
-    return template.render(posts=sorted(posts, key=lambda post: datetime.datetime.strptime(post['date'], '%Y-%m-%d %H:%M'), reverse=True), is_index=True, is_post=False)
+    return template.render(posts=posts, is_index=True, is_post=False)
   index.exposed = True
   set_dropbox_auth.exposed = True
+  posts.exposed = True
   
  
   	 

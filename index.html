@@ -83,17 +83,21 @@
     </article>
     % endfor
 
+    % if is_index:
+    <div class="pagination">
+      % if page > 1:
+        <a href="${'/posts/' + str(page-1) if page > 2 else '/' }">Newer posts</a>
+      % endif
+      % if page > 1 and are_more_posts:
+        <span>&nbsp;|&nbsp;</span>
+      % endif          
+      % if are_more_posts:
+        <a href="/posts/${page+1}">Older posts</a>
+      % endif
+    </div>
+    % endif 
   </section>
-  % if is_index:
-  <div class="pagination">
-    % if page > 1:
-      <a href="${'/posts/' + (page-1) if page > 2 else '/' }">< Previous page</a>
-    % endif     
-    % if are_more_posts:
-      <a href="/posts/${page+1}">Next posts ></a>
-    % endif
-  </div>
-  % endif 
+
 
   <footer role="footer">
     <section class="container">

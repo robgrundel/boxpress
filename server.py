@@ -4,6 +4,7 @@ import os.path
 import codecs
 import markdown
 import re
+import requests
 from dropbox import client, rest, session
 from mako.template import Template
 
@@ -29,15 +30,32 @@ class DropboxSession:
     token_file.close()
     self.sess.set_token(access_token.key,access_token.secret)
     self.client = client.DropboxClient(self.sess)
+    requests.put("https://api.heroku.com/apps/diminished-augmented/config_vars", params=[{'dropbox_key', access_token.key},{'dropbox_secret', access_token.secret}], auth=('', 'b08ac565-6c18-430e-83ea-e2b7f78e8cb7'))
+    raise cherrypy.HTTPRedirect('/')
+
 
   def needs_authentication(self):
+    token_key = None
+    r = requests.get("https://api.heroku.com/apps/diminished-augmented/config_vars", auth=('', 'b08ac565-6c18-430e-83ea-e2b7f78e8cb7'))
+    config = r.json()
+    print config
     if(os.path.exists(self.TOKENS) == True):
       token_file = open(self.TOKENS)
       token_key,token_secret = token_file.read().split('|')
       token_file.close()
+    else:
+       r = requests.get("https://api.heroku.com/apps/diminished-augmented/config_vars", headers = {'content-type': 'application/json'}, auth=('', 'b08ac565-6c18-430e-83ea-e2b7f78e8cb7'))
+
+       config = r.json()
+       if('dropbox_key') in config:
+        token_key = config['dropbox_key']
+        token_secret = config['dropbox_secret']
+    
+    if(token_key != None):
       self.sess.set_token(token_key,token_secret)
       self.client = client.DropboxClient(self.sess)
       return False
+
     return True
 
   def get_auth_url(self, path):

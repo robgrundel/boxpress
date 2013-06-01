@@ -84,7 +84,7 @@
     % endfor
 
   </section>
-
+  % if is_index:
   <div class="pagination">
     % if page > 1:
       <a href="${'/posts/' + (page-1) if page > 2 else '/' }">< Previous page</a>
@@ -93,6 +93,7 @@
       <a href="/posts/${page+1}">Next posts ></a>
     % endif
   </div>
+  % endif 
 
   <footer role="footer">
     <section class="container">

@@ -87,9 +87,11 @@ class Post:
   def default(self, post):    
     if(self.session.needs_authentication()):
       raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
-    post = generator.generate_post('/' + post + '.md')
+
+    postTemplate = Template(filename='posts.html')  
+    renderedPost = postTemplate.render(posts=[self.generator.generate_post('/' + post + '.md')], is_index=True, is_post=False)
     template = Template(filename='index.html') 
-    return template.render(posts=[post], is_index=False, is_post=True)
+    return template.render(posts=renderedPost, is_index=False, is_post=True)
   default.exposed = True
 
 class Boxpress: 
@@ -113,8 +115,8 @@ class Boxpress:
       if(f['path'].endswith('.md')):
         posts.append(self.generator.generate_post(f['path']))  
     template = Template(filename='posts.html')  
-    return template.render(posts=posts, is_index=True, is_post=False)
-
+    r = template.render(posts=posts, is_index=True, is_post=False)
+    return r
 
   def index(self):
     if(self.session.needs_authentication()):

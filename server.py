@@ -88,10 +88,9 @@ class Post:
     if(self.session.needs_authentication()):
       raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
 
-    postTemplate = Template(filename='posts.html')  
-    renderedPost = postTemplate.render(posts=[self.generator.generate_post('/' + post + '.md')], is_index=True, is_post=False)
+    post = self.generator.generate_post('/' + post + '.md')
     template = Template(filename='index.html') 
-    return template.render(posts=renderedPost, is_index=False, is_post=True)
+    return template.render(posts=[post], is_index=False, is_post=True)
   default.exposed = True
 
 class Boxpress: 
@@ -103,9 +102,10 @@ class Boxpress:
     self.session.set_auth(oauth_token, uid)
     raise cherrypy.HTTPRedirect("/")
 
-  def posts(self,page):
+  def index(self,page=1):
     if(self.session.needs_authentication()):
       raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
+    
     client = self.session.get_client()
     posts = []
     contents = sorted(client.metadata('/')['contents'], key=lambda post: parse(post['modified']))
@@ -114,20 +114,11 @@ class Boxpress:
     for f in contents[startIdx:startIdx+10]:
       if(f['path'].endswith('.md')):
         posts.append(self.generator.generate_post(f['path']))  
-    template = Template(filename='posts.html')  
-    r = template.render(posts=posts, is_index=True, is_post=False)
-    return r
-
-  def index(self):
-    if(self.session.needs_authentication()):
-      raise cherrypy.HTTPRedirect(self.session.get_auth_url('/set_dropbox_auth'))
     
-    posts = self.posts(1)
     template = Template(filename='index.html')	
     return template.render(posts=posts, is_index=True, is_post=False)
   index.exposed = True
   set_dropbox_auth.exposed = True
-  posts.exposed = True
   
  
   	 

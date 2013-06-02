@@ -21,10 +21,15 @@
        -moz-animation-delay: 1.1s;
             animation-delay: 1.1s;
   }
-  .headlinks li.dribbble{
+  .headlinks li.pinterest{
     -webkit-animation-delay: 1.3s;
        -moz-animation-delay: 1.3s;
             animation-delay: 1.3s;
+  }
+  .headlinks li.mail{
+    -webkit-animation-delay: 1.5s;
+       -moz-animation-delay: 1.5s;
+            animation-delay: 1.5s;
   }
 @-webkit-keyframes fadein{
   0%{

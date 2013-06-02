@@ -58,6 +58,14 @@ code{
   margin: 0 auto;
 }
 
+.container img {
+   display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1em;
+
+}
+
 /* Header
  *************************************/
 
@@ -462,6 +470,7 @@ footer[role="footer"]{
 
 .pagination { font-family: "Source Sans Pro"; margin-top: 2em; font-size: 1.25em;}
 .pagination span { color: #a4abb2;}
+
 /* Retina
  *************************************/
 

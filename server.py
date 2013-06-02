@@ -89,10 +89,12 @@ class PostGenerator:
     metadata = self.get_metadata(contents)
     title = self.read_metadata(metadata, 'title')
     date =  self.read_metadata(metadata, 'date')
+    print date
+    prettydate = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M").strftime("%A, %d %B %Y")
     tags = self.read_metadata(metadata, 'tags')
     contents = self.strip_metadata(contents)
     html = markdown.markdown(contents)
-    return { 'content' : html, 'title' : title, 'date' : date, 'tags' : tags, 'permalink' : 'post/' + path[1:-3], 'excerpt' : self.generate_excerpt(html) }
+    return { 'content' : html, 'title' : title, 'date' : date, 'prettydate' : prettydate,  'tags' : tags, 'permalink' : 'post/' + path[1:-3], 'excerpt' : self.generate_excerpt(html) }
 
 class Post:
 
@@ -124,8 +126,7 @@ class Boxpress:
     
     client = self.session.get_client()
     posts = []
-    contents = sorted(client.metadata('/')['contents'], key=lambda post: parse(post['modified']))
-    
+    contents = sorted(client.metadata('/')['contents'], key=lambda post: parse(post['client_mtime']), reverse=True)
     startIdx = (int(page)-1) * 10
     for f in contents[startIdx:startIdx+10]:
       if(f['path'].endswith('.md')):

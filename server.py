@@ -12,6 +12,7 @@ from mako.template import Template
 import dateutil.tz
 from dateutil.parser import *
 current_dir = os.path.dirname(os.path.abspath(__file__))
+analytics = os.environ['ANALYTICS'] if 'ANALYTICS' in os.environ else ''
 
 class DropboxSession:
   request_token = ''
@@ -108,7 +109,7 @@ class Post:
 
     post = self.generator.generate_post('/' + post + '.md')
     template = Template(filename='index.html') 
-    return template.render(posts=[post], is_index=False, is_post=True)
+    return template.render(posts=[post], is_index=False, is_post=True, analytics=analytics)
   default.exposed = True
 
 class Boxpress: 
@@ -137,7 +138,7 @@ class Boxpress:
     
     template = Template(filename='index.html')	
 
-    return template.render(posts=posts, is_index=True, is_post=False, are_more_posts=are_more_posts, page=int(page) )
+    return template.render(posts=posts, is_index=True, is_post=False, are_more_posts=are_more_posts, page=int(page), analytics=analytics )
   posts.exposed = True
   set_dropbox_auth.exposed = True
   

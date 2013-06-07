@@ -63,6 +63,7 @@
            ${post['content']}
         % else:
            ${post['excerpt']}
+           <p><a class="read-more" title="Continue reading '${post['title']}'" href="/${post['permalink']}">Continue reading</a></p>
         % endif
       </section>
       % if is_post:

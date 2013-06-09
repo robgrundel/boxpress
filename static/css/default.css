@@ -75,6 +75,9 @@ header[role="banner"]{
   text-align: center;
   border-bottom: 1px solid #ddd;
 }
+
+header[role="banner"] a { text-decoration: underline;}
+
   .logo{
     display: inline-block;
     width: 82px;
